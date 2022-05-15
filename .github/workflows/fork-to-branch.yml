@@ -19,7 +19,7 @@ jobs:
       - uses: actions/checkout@v2
         with:
             fetch-depth: 0 
-            token: ${{ secrets.fork-to-branch }}
+            token: ${{ secrets.PERSONAL_TOKEN }}
             
       - name: Check branch exist
         run: |
