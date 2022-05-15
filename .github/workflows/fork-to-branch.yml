@@ -23,11 +23,13 @@ jobs:
             
       - name: Check branch exist
         run: |
-          if [[ ! -z git show-ref --verify --quiet refs/heads/feature/${{ github.event.inputs.source-branch }} ]]
-          then
-            git branch -d feature/${{ github.event.inputs.source-branch }}
-            echo "branch feature/${{ github.event.inputs.source-branch }} deleted"
-          fi 
+          cmd=$(echo "git show-ref --verify --quiet refs/heads/feature/${{ github.event.inputs.source-branch }}")
+          echo "$cmd"
+     # if [[ ! -z "$cmd" ]]
+     # then
+     #   git branch -d feature/${{ github.event.inputs.source-branch }}
+     #   echo "branch feature/${{ github.event.inputs.source-branch }} deleted"
+     # fi 
 
 #       - name: Git clone forked pipeline
 #         run: |
