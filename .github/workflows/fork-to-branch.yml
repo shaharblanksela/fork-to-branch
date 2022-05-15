@@ -23,8 +23,7 @@ jobs:
             
       - name: Check branch exist
         run: |
-          cmd="$(git show-ref --verify --quiet refs/heads/feature/${{ github.event.inputs.source-branch }})"
-          if [[ ! -z "$cmd" ]]
+          if [[ ! -z git show-ref --verify --quiet refs/heads/feature/${{ github.event.inputs.source-branch }} ]]
           then
             git branch -d feature/${{ github.event.inputs.source-branch }}
             echo "branch feature/${{ github.event.inputs.source-branch }} deleted"
