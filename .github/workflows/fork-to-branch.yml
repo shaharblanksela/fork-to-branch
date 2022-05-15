@@ -19,6 +19,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: Check branch exist
         run: |
+          set +e
           cmd="$(git rev-parse --verify --quiet  feature/${{ github.event.inputs.source-branch }})"
           if [[ ! -z "$cmd" ]]
           then
