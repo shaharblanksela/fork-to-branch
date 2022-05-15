@@ -27,10 +27,15 @@ jobs:
           fi 
 
       - name: Git clone forked pipeline
-        run: git clone https://github.com/${{ github.event.inputs.contributor-name }}/fork-to-branch.git
-      
+        run: |
+          pwd
+          git clone https://github.com/${{ github.event.inputs.contributor-name }}/fork-to-branch.git
+          ls -l
+          
       - name: Git checkout origin branch
-        run: git checkout origin ${{ github.event.inputs.source-branch }}
+        run: |
+          git pull
+          git checkout origin/${{ github.event.inputs.source-branch }}
       
       - name: Git remote add upstream
         run: git remote add upstream https://github.com/shaharblanksela/fork-to-branch.git
