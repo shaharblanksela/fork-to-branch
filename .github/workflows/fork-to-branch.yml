@@ -40,7 +40,6 @@ jobs:
 #           git checkout origin/${{ github.event.inputs.source-branch }}
       
       - name: Git remote add upstream
-        working-directory: fork-to-branch
         run: |
           git remote add upstream https://${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.event.inputs.contributor-name }}/fork-to-branch.git
           git fetch --all
