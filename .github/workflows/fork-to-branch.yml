@@ -23,7 +23,12 @@ jobs:
             
       - name: Check branch exist
         run: |
-          git branch
+          existed_in_local=$(git branch --list feature/${{ github.event.inputs.source-branch }})
+          if [[ -z ${existed_in_local} ]]
+          then
+            git branch -d feature/${{ github.event.inputs.source-branch }}
+            echo "branch feature/${{ github.event.inputs.source-branch }} deleted"
+          fi
      # if [[ ! -z "$cmd" ]]
      # then
      #   git branch -d feature/${{ github.event.inputs.source-branch }}
