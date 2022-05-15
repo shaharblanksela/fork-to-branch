@@ -23,8 +23,7 @@ jobs:
             
       - name: Check branch exist
         run: |
-          cmd="$(git show-ref --verify --quiet refs/heads/feature/${{ github.event.inputs.source-branch }})"
-          echo "$cmd"
+          git show-ref --verify --quiet refs/heads/feature/${{ github.event.inputs.source-branch }}
      # if [[ ! -z "$cmd" ]]
      # then
      #   git branch -d feature/${{ github.event.inputs.source-branch }}
