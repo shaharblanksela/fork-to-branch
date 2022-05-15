@@ -26,7 +26,7 @@ jobs:
           fi 
 
       - name: Git clone forked pipeline
-        run: git clone https://github.com/shaharblanksela/${{ github.event.inputs.contributor-name }}/fork-to-branch.git
+        run: git clone https://github.com/${{ github.event.inputs.contributor-name }}/fork-to-branch.git
       
       - name: Git checkout origin branch
         run: git checkout origin ${{ github.event.inputs.source-branch }}
