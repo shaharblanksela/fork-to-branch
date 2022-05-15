@@ -33,17 +33,22 @@ jobs:
           ls -l
           
       - name: Git checkout origin branch
+        working-directory: fork-to-branch
         run: |
-          git pull
+          ls -l
+          pwd
           git checkout origin/${{ github.event.inputs.source-branch }}
       
       - name: Git remote add upstream
+        working-directory: fork-to-branch
         run: git remote add upstream https://github.com/shaharblanksela/fork-to-branch.git
       
       - name: Git create new branch
+        working-directory: fork-to-branch
         run: git checkout -b feature/${{ github.event.inputs.source-branch }}
       
       - name: Git push new branch
+        working-directory: fork-to-branch
         run: git push
 
 
