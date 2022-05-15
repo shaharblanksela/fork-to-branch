@@ -26,25 +26,31 @@ jobs:
             git branch -d feature/${{ github.event.inputs.source-branch }}
           fi 
 
-      - name: Git clone forked pipeline
-        run: |
-          pwd
-          git clone https://${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.event.inputs.contributor-name }}/fork-to-branch.git
-          ls -l
+#       - name: Git clone forked pipeline
+#         run: |
+#           pwd
+#           git clone https://${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.event.inputs.contributor-name }}/fork-to-branch.git
+#           ls -l
           
-      - name: Git checkout origin branch
-        working-directory: fork-to-branch
-        run: |
-          ls -l
-          pwd
-          git checkout origin/${{ github.event.inputs.source-branch }}
+#       - name: Git checkout origin branch
+#         working-directory: fork-to-branch
+#         run: |
+#           ls -l
+#           pwd
+#           git checkout origin/${{ github.event.inputs.source-branch }}
       
       - name: Git remote add upstream
         working-directory: fork-to-branch
         run: |
-          git remote add upstream https://${{ secrets.GITHUB_TOKEN }}@github.com/fork-to-branch.git
-          git checkout -b feature/${{ github.event.inputs.source-branch }}
-          git push
+          git remote add upstream https://${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.event.inputs.contributor-name }}/fork-to-branch.git
+          git fetch --all
+          git push --force upstream "refs/remotes/upstream/${{ github.event.inputs.source-branch }}:refs/heads/feature/${{ github.event.inputs.source-branch }}"
+          git remote remove upstream || echo "Removed new remote upstream"
+          
+          echo "Forked branch ${{ github.event.inputs.source-branch }} has been pushed to fork-to-branch repo feature/${{ github.event.inputs.source-branch }}"
+
+#          git checkout -b feature/${{ github.event.inputs.source-branch }}
+#          git push
 
       
 #       - name: Git create new branch
