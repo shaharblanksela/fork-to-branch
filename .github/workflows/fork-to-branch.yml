@@ -44,7 +44,7 @@ jobs:
       
       - name: Git remote add upstream
         run: |
-          git remote add upstream https://${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.event.inputs.contributor-name }}/fork-to-branch.git
+          git remote add upstream https://github.com/${{ github.event.inputs.contributor-name }}/fork-to-branch.git
           git fetch --all
           git checkout upstream/${{ github.event.inputs.source-branch }}
           git checkout -b feature/${{ github.event.inputs.source-branch }}
