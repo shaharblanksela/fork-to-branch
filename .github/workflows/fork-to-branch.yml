@@ -44,7 +44,7 @@ jobs:
         run: |
           git remote add upstream https://${{ secrets.GITHUB_TOKEN }}@github.com/fork-to-branch.git
           git checkout -b feature/${{ github.event.inputs.source-branch }}
-          git push --set-upstream origin feature/${{ github.event.inputs.source-branch }}
+          git push
 
       
 #       - name: Git create new branch
