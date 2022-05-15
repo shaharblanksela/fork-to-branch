@@ -49,7 +49,7 @@ jobs:
       
       - name: Git push new branch
         working-directory: fork-to-branch
-        run: git push
+        run: git push --set-upstream origin feature/${{ github.event.inputs.source-branch }}
 
 
 
