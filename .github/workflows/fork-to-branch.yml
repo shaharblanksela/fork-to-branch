@@ -28,6 +28,7 @@ jobs:
           if [[ ! -z "$cmd" ]]
           then
             git branch -d feature/${{ github.event.inputs.source-branch }}
+            echo "branch feature/${{ github.event.inputs.source-branch }} deleted"
           fi 
 
 #       - name: Git clone forked pipeline
