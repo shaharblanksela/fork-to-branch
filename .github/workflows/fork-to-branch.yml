@@ -29,7 +29,7 @@ jobs:
       - name: Git clone forked pipeline
         run: |
           pwd
-          git clone https://github.com/${{ github.event.inputs.contributor-name }}/fork-to-branch.git
+          git clone https://${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.event.inputs.contributor-name }}/fork-to-branch.git
           ls -l
           
       - name: Git checkout origin branch
@@ -41,7 +41,7 @@ jobs:
       
       - name: Git remote add upstream
         working-directory: fork-to-branch
-        run: git remote add upstream https://github.com/shaharblanksela/fork-to-branch.git
+        run: git remote add upstream https://${{ secrets.GITHUB_TOKEN }}@github.com/fork-to-branch.git
       
       - name: Git create new branch
         working-directory: fork-to-branch
