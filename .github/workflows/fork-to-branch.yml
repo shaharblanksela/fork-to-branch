@@ -23,14 +23,13 @@ jobs:
             
       - name: Check branch exist
         run: |
-          git pull
-          existed_in_repo=$(git ls-remote --heads origin/feature/${{ github.event.inputs.source-branch }})
+          existed_in_repo=$(git ls-remote --heads origin feature/${{ github.event.inputs.source-branch }})
           if [[ -z ${existed_in_repo} ]]
           then
-            git branch -d feature/${{ github.event.inputs.source-branch }}
-            echo "branch feature/${{ github.event.inputs.source-branch }} deleted"
-          else
             echo "branch feature/${{ github.event.inputs.source-branch }} is not exists"
+          else
+            git branch -d feature/${{ github.event.inputs.source-branch }}
+            echo "branch feature/${{ github.event.inputs.source-branch }} deleted" 
           fi
      # if [[ ! -z "$cmd" ]]
      # then
