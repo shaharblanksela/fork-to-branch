@@ -23,7 +23,8 @@ jobs:
             
       - name: Check branch exist
         run: |
-          existed_in_repo=$(git ls-remote --heads origin feature/${{ github.event.inputs.source-branch }})
+          git pull
+          existed_in_repo=$(git ls-remote --heads origin/feature/${{ github.event.inputs.source-branch }})
           if [[ -z ${existed_in_repo} ]]
           then
             git branch -d feature/${{ github.event.inputs.source-branch }}
