@@ -46,7 +46,7 @@ jobs:
         run: |
           git remote add upstream https://${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.event.inputs.contributor-name }}/fork-to-branch.git
           git fetch --all
-          git push --force upstream "refs/remotes/upstream/${{ github.event.inputs.source-branch }}:refs/heads/feature/${{ github.event.inputs.source-branch }}"
+          git push --force "refs/remotes/upstream/${{ github.event.inputs.source-branch }}:refs/heads/feature/${{ github.event.inputs.source-branch }}"
           git remote remove upstream || echo "Removed new remote upstream"
           
           echo "Forked branch ${{ github.event.inputs.source-branch }} has been pushed to fork-to-branch repo feature/${{ github.event.inputs.source-branch }}"
