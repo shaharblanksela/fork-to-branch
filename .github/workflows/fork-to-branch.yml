@@ -28,7 +28,7 @@ jobs:
           then
             echo "branch feature/${{ github.event.inputs.source-branch }} is not exists"
           else
-            git branch -d feature/${{ github.event.inputs.source-branch }}
+            git push origin --delete feature/${{ github.event.inputs.source-branch }}
             echo "branch feature/${{ github.event.inputs.source-branch }} deleted" 
           fi
      # if [[ ! -z "$cmd" ]]
