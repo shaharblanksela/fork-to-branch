@@ -72,7 +72,7 @@ jobs:
           git fetch --all
           git checkout upstream/${{ env.REF }}
           git checkout -b pr/${{ env.REF }}
-          git push origin pr/${{ env.REF }}
+          git push
           
           echo "Forked branch ${{ env.OWNER }}:${{ env.REF }} has been pushed to fork-to-branch repo pr/${{ env.REF }}"
 
