@@ -58,6 +58,7 @@ jobs:
           then
             echo "branch pr/${{ env.REF }} is not exists"
           else
+           git push origin --delete pr/${{ env.REF }}
            echo "branch pr/${{ env.REF }} deleted" 
           fi
 
@@ -71,9 +72,9 @@ jobs:
           git fetch --all
           git checkout upstream/${{ env.REF }}
           git checkout -b pr/${{ env.REF }}
-          git push --set-upstream origin pr/${{ env.REF }}
+          git push origin pr/${{ env.REF }}
           
-          echo "Forked branch ${{ env.REF }} has been pushed to fork-to-branch repo pr/${{ env.REF }}"
+          echo "Forked branch ${{ env.OWNER }}:${{ env.REF }} has been pushed to fork-to-branch repo pr/${{ env.REF }}"
 
 
 
