@@ -34,7 +34,7 @@ jobs:
           trigger: "run branch"
   
       - name: Check if branch exists
-        if: steps.check.outputs.triggered == 'true' && github.event_name == 'issue'
+        if: steps.check.outputs.triggered == 'true'
         run: |
           existed_in_repo=$(git ls-remote --heads origin pr/${{ github.base_ref }})
           if [[ -z ${existed_in_repo} ]]
