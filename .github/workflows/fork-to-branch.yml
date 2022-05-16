@@ -19,7 +19,7 @@ on:
 jobs:
   create_branch:
     runs-on: ubuntu-latest
-    if: ${{ github.event.issue.pull_request == "run branch" }}
+    if: ${{ github.event.issue.pull_request == "run_branch" }}
     env:
       HEAD_OWNER: ${{ github.event.pull_request.head.repo.owner.login }}
     steps:
