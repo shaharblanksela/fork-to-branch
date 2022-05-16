@@ -36,25 +36,26 @@ jobs:
       - name: Check if branch exists
         if: steps.check.outputs.triggered == 'true'
         run: |
-          existed_in_repo=$(git ls-remote --heads origin pr/${{ github.event.pull_request.head.ref }})
+          existed_in_repo=$(git ls-remote --heads origin pr/${{ github.head_ref }})
           if [[ -z ${existed_in_repo} ]]
           then
-            echo "branch pr/${{ github.event.pull_request.head.ref }} is not exists"
+            echo "branch pr/${{ github.head_ref }} is not exists"
           else
-            git push origin --delete pr/${{ github.event.pull_request.head.ref }}
-            echo "branch pr/${{ github.event.pull_request.head.ref }} deleted" 
+            git push origin --delete pr/${{ github.head_ref }}
+            echo "branch pr/${{ github.head_ref }} deleted" 
           fi
 
-      - name: Git remote add upstream
-        if: steps.check.outputs.triggered == 'true'
-        run: |
-          git remote add upstream https://github.com/${{ env.HEAD_OWNER }}/fork-to-branch.git
-          git fetch --all
-          git checkout upstream/${{ github.event.pull_request.head.ref }}
-          git checkout -b pr/${{ github.event.pull_request.head.ref }}
-          git push --set-upstream origin pr/${{ github.event.pull_request.head.ref }}
+
+#       - name: Git remote add upstream
+#         if: steps.check.outputs.triggered == 'true'
+#         run: |
+#           git remote add upstream https://github.com/${{ env.HEAD_OWNER }}/fork-to-branch.git
+#           git fetch --all
+#           git checkout upstream/${{ github.event.pull_request.head.ref }}
+#           git checkout -b pr/${{ github.event.pull_request.head.ref }}
+#           git push --set-upstream origin pr/${{ github.event.pull_request.head.ref }}
           
-          echo "Forked branch ${{ github.event.pull_request.head.ref }} has been pushed to fork-to-branch repo pr/${{ github.event.pull_request.head.ref }}"
+#           echo "Forked branch ${{ github.event.pull_request.head.ref }} has been pushed to fork-to-branch repo pr/${{ github.event.pull_request.head.ref }}"
 
 
 
