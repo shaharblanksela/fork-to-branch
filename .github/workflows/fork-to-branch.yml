@@ -28,22 +28,26 @@ jobs:
             fetch-depth: 0 
             token: ${{ secrets.PERSONAL_TOKEN }}
             
-      - uses: khan/pull-request-comment-trigger@v1.1.0
-        id: check
-        with:
-          trigger: "run branch"
+#       - uses: khan/pull-request-comment-trigger@v1.1.0
+#         id: check
+#         with:
+#           trigger: "run branch"
+      - name: Print the GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: echo "$GITHUB_CONTEXT"
   
-      - name: Check if branch exists
-        if: steps.check.outputs.triggered == 'true'
-        run: |
-          existed_in_repo=$(git ls-remote --heads origin pr/${{ github.event.pull_request.base.ref }})
-          if [[ -z ${existed_in_repo} ]]
-          then
-            echo "branch pr/${{ github.event.pull_request.base.ref }} is not exists"
-          else
-            git push origin --delete pr/${{ github.event.pull_request.base.ref }}
-            echo "branch pr/${{ github.event.pull_request.base.ref }} deleted" 
-          fi
+#       - name: Check if branch exists
+#         if: steps.check.outputs.triggered == 'true'
+#         run: |
+#           existed_in_repo=$(git ls-remote --heads origin pr/${{ github.event.pull_request.base.ref }})
+#           if [[ -z ${existed_in_repo} ]]
+#           then
+#             echo "branch pr/${{ github.event.pull_request.base.ref }} is not exists"
+#           else
+#             git push origin --delete pr/${{ github.event.pull_request.base.ref }}
+#             echo "branch pr/${{ github.event.pull_request.base.ref }} deleted" 
+#           fi
 
 
 #       - name: Git remote add upstream
