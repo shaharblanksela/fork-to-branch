@@ -36,13 +36,13 @@ jobs:
       - name: Check if branch exists
         if: steps.check.outputs.triggered == 'true'
         run: |
-          existed_in_repo=$(git ls-remote --heads origin pr/${{ github.base_ref }})
+          existed_in_repo=$(git ls-remote --heads origin pr/${{ github.event.pull_request.base.ref }})
           if [[ -z ${existed_in_repo} ]]
           then
-            echo "branch pr/${{ github.base_ref }} is not exists"
+            echo "branch pr/${{ github.event.pull_request.base.ref }} is not exists"
           else
-            git push origin --delete pr/${{ github.base_ref }}
-            echo "branch pr/${{ github.base_ref }} deleted" 
+            git push origin --delete pr/${{ github.event.pull_request.base.ref }}
+            echo "branch pr/${{ github.event.pull_request.base.ref }} deleted" 
           fi
 
 
