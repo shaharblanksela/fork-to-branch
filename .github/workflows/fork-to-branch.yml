@@ -28,7 +28,13 @@ jobs:
             fetch-depth: 0 
             token: ${{ secrets.PERSONAL_TOKEN }}
             
+      - uses: khan/pull-request-comment-trigger@v1.1.0
+        id: check
+        with:
+          trigger: "run branch"
+  
       - name: Check if branch exists
+        if: steps.check.outputs.triggered == 'true'
         run: |
           existed_in_repo=$(git ls-remote --heads origin pr/${{ github.event.pull_request.head.ref }})
           if [[ -z ${existed_in_repo} ]]
@@ -40,6 +46,7 @@ jobs:
           fi
 
       - name: Git remote add upstream
+        if: steps.check.outputs.triggered == 'true'
         run: |
           git remote add upstream https://github.com/${{ env.HEAD_OWNER }}/fork-to-branch.git
           git fetch --all
