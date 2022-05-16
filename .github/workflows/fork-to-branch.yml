@@ -24,7 +24,6 @@ jobs:
       HEAD_OWNER: ${{ github.event.pull_request.head.repo.owner.login }}
     steps: 
       - uses: actions/checkout@v2
-        if: steps.check.outputs.triggered == 'true'
         with:
             fetch-depth: 0 
             token: ${{ secrets.PERSONAL_TOKEN }}
