@@ -11,15 +11,14 @@ on:
 #         type: string
 #         description: write your github-user name.
 #         required: true
-  issue_comment:
-    types: [created]
-  pull_request:
-    types: [created, synchronize, reopened]
+#   issue_comment:
+#     types: [created]
+  pull_request_target:
+    types: [created, edited, synchronize, reopened, review_requested]
 
 jobs:
   create_branch:
     runs-on: ubuntu-latest
-    if: ${{ github.event.issue.pull_request }}
     env:
       HEAD_OWNER: ${{ github.event.pull_request.head.repo.owner.login }}
     steps: 
@@ -36,13 +35,12 @@ jobs:
       - name: Check if branch exists
         if: steps.check.outputs.triggered == 'true'
         run: |
-          existed_in_repo=$(git ls-remote --heads origin pr/${{ github.event.issue.pull_request.base.ref }})
+          existed_in_repo=$(git ls-remote --heads origin pr/${{ github.ref }})
           if [[ -z ${existed_in_repo} ]]
           then
-            echo "branch pr/${{ github.event.issue.pull_request.base.ref }} is not exists"
+            echo "branch pr/${{ github.ref }} is not exists"
           else
-            git push origin --delete pr/${{ github.event.issue.pull_request.base.ref }}
-            echo "branch pr/${{ github.event.issue.pull_request.base.ref }} deleted" 
+           echo "branch pr/${{ github.ref }} deleted" 
           fi
 
 
