@@ -86,6 +86,7 @@ jobs:
         with:
           message: 'The branch pr/${{ env.REF }} was created! (edited)'
           comment_includes: 'run branch'
+          GITHUB_TOKEN: ${{ secrets.PERSONAL_TOKEN }}
 
 
 
