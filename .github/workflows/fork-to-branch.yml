@@ -40,6 +40,7 @@ jobs:
           fetch-depth: 0
           token: ${{ secrets.PERSONAL_TOKEN }}
           ref: ${{ fromJSON(steps.get-pr.outputs.result).head.ref }}
+          repository: ${{ fromJSON(steps.get-pr.outputs.result).head.repo.full_name }}
             
       - uses: khan/pull-request-comment-trigger@v1.1.0
         id: check
@@ -67,10 +68,9 @@ jobs:
           OWNER: ${{ fromJSON(steps.get-pr.outputs.result).head.repo.owner.login }}
           REF: ${{ fromJSON(steps.get-pr.outputs.result).head.ref }}
         run: |
-          git remote add upstream https://github.com/${{ env.OWNER }}/fork-to-branch.git
+          git remote add upstream https://github.com/shaharblanksela/fork-to-branch.git
           git fetch --all
-          git checkout upstream/${{ env.REF }}
-          git checkout -b pr/${{ env.REF }}
+          git checkout ${{ env.REF }}
           git push --set-upstream origin pr/${{ env.REF }}
           
           echo "Forked branch ${{ env.OWNER }}:${{ env.REF }} has been pushed to fork-to-branch repo pr/${{ env.REF }}"
