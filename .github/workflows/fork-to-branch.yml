@@ -46,6 +46,7 @@ jobs:
         id: check
         with:
           trigger: "run branch"
+          prefix_only: 'true'
   
       - name: Check if branch exists
         if: steps.check.outputs.triggered == 'true'
