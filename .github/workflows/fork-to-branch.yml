@@ -85,7 +85,8 @@ jobs:
           PR_NUMBER: ${{ github.event.issue.number }}
         with:
           message: 'The branch pr/${{ env.REF }} was created! (edited)'
-          comment_includes: 'run branch'
+          pr_number: ${{ env.PR_NUMBER }}
+          comment_includes: "run branch"
           GITHUB_TOKEN: ${{ secrets.PERSONAL_TOKEN }}
 
 
