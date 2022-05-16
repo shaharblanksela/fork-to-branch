@@ -1,78 +1,54 @@
 name: FORK-TO-BRANCH
 
 on:
-  workflow_dispatch:
-    inputs:
-      source-branch:
-        type: string
-        description: The name of the branch from forked-repo.
-        required: true
-      contributor-name:
-        type: string
-        description: write your github-user name.
-        required: true
+#   workflow_dispatch:
+#     inputs:
+#       source-branch:
+#         type: string
+#         description: The name of the branch from forked-repo.
+#         required: true
+#       contributor-name:
+#         type: string
+#         description: write your github-user name.
+#         required: true
+  issue_comment:
+    types: [created]
+  pull_request:
+    types: [created, synchronize, reopened]
 
 jobs:
   create_branch:
     runs-on: ubuntu-latest
+    if: ${{ github.event.issue.pull_request == "run branch" }}
+    env:
+      HEAD_OWNER: ${{ github.event.pull_request.head.repo.owner.login }}
     steps:
       - uses: actions/checkout@v2
         with:
             fetch-depth: 0 
             token: ${{ secrets.PERSONAL_TOKEN }}
             
-      - name: Check branch exist
+      - name: Check if branch exists
         run: |
-          existed_in_repo=$(git ls-remote --heads origin feature/${{ github.event.inputs.source-branch }})
+          existed_in_repo=$(git ls-remote --heads origin pr/${{ github.event.pull_request.head.ref }})
           if [[ -z ${existed_in_repo} ]]
           then
-            echo "branch feature/${{ github.event.inputs.source-branch }} is not exists"
+            echo "branch pr/${{ github.event.pull_request.head.ref }} is not exists"
           else
-            git push origin --delete feature/${{ github.event.inputs.source-branch }}
-            echo "branch feature/${{ github.event.inputs.source-branch }} deleted" 
+            git push origin --delete pr/${{ github.event.pull_request.head.ref }}
+            echo "branch pr/${{ github.event.pull_request.head.ref }} deleted" 
           fi
-     # if [[ ! -z "$cmd" ]]
-     # then
-     #   git branch -d feature/${{ github.event.inputs.source-branch }}
-     #   echo "branch feature/${{ github.event.inputs.source-branch }} deleted"
-     # fi 
 
-#       - name: Git clone forked pipeline
-#         run: |
-#           pwd
-#           git clone https://${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.event.inputs.contributor-name }}/fork-to-branch.git
-#           ls -l
-          
-#       - name: Git checkout origin branch
-#         working-directory: fork-to-branch
-#         run: |
-#           ls -l
-#           pwd
-#           git checkout origin/${{ github.event.inputs.source-branch }}
-      
       - name: Git remote add upstream
         run: |
-          git remote add upstream https://github.com/${{ github.event.inputs.contributor-name }}/fork-to-branch.git
+          git remote add upstream https://github.com/${{ env.HEAD_OWNER }}/fork-to-branch.git
           git fetch --all
-          git checkout upstream/${{ github.event.inputs.source-branch }}
-          git checkout -b feature/${{ github.event.inputs.source-branch }}
-          git push --set-upstream origin feature/${{ github.event.inputs.source-branch }}
+          git checkout upstream/${{ github.event.pull_request.head.ref }}
+          git checkout -b pr/${{ github.event.pull_request.head.ref }}
+          git push --set-upstream origin pr/${{ github.event.pull_request.head.ref }}
           
+          echo "Forked branch ${{ github.event.pull_request.head.ref }} has been pushed to fork-to-branch repo pr/${{ github.event.pull_request.head.ref }}"
 
-          
-          echo "Forked branch ${{ github.event.inputs.source-branch }} has been pushed to fork-to-branch repo feature/${{ github.event.inputs.source-branch }}"
-
-#          git checkout -b feature/${{ github.event.inputs.source-branch }}
-#          git push
-
-      
-#       - name: Git create new branch
-#         working-directory: fork-to-branch
-#         run: git checkout -b feature/${{ github.event.inputs.source-branch }}
-      
-#       - name: Git push new branch
-#         working-directory: fork-to-branch
-#         run: git push --set-upstream origin feature/${{ github.event.inputs.source-branch }}
 
 
 
