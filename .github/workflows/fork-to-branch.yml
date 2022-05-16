@@ -67,9 +67,10 @@ jobs:
         env:
           OWNER: ${{ fromJSON(steps.get-pr.outputs.result).head.repo.owner.login }}
           REF: ${{ fromJSON(steps.get-pr.outputs.result).head.ref }}
-          PR_NUMBER: ${{ github.event.number }}
+          PR_REF: ${{ fromJSON(steps.get-pr.outputs.result).ref }}
         run: |
-          echo "$PR_NUMBER"
+          echo "$PR_REF"
+          echo ::set-env name=PULL_NUMBER::$(echo "$PR_REF" | awk -F / '{print $3}')
           git remote add upstream https://github.com/shaharblanksela/fork-to-branch.git
           git fetch --all
           git checkout ${{ env.REF }}
