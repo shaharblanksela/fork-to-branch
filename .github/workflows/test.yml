@@ -1,0 +1,135 @@
+name: "Run PR Comment"
+
+on:
+  issue_comment:
+    types: [created]
+   
+jobs:
+  terraform-plan-deploy:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.issue.pull_request }}
+    # outputs:
+    #   FS_ID: ${{ steps.terraform-output.outputs.fs_id }}
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - uses: khan/pull-request-comment-trigger@v1.1.0
+        id: check
+        with:
+          trigger: "terraform plan"
+      
+      - uses: khan/pull-request-comment-trigger@v1.1.0
+        id: apply
+        with:
+          trigger: "terraform apply"
+
+      - name: Comment body
+        id: comment
+        if: steps.check.outputs.triggered == 'true'
+        env:
+          COMMENT_BODY: ${{ steps.check.outputs.comment_body }}
+        run: |
+          COMMENT=$COMMENT_BODY
+          echo "$COMMENT"
+          array=($COMMENT)
+          STACK="$(echo ${array[2]})"
+          DEPLOYMENT="$(echo ${array[3]})"
+          # APPROVER="$(echo ${array[4]})"
+          echo "::set-output name=STACK::$STACK"
+          echo "::set-output name=DEPLOYMENT::$DEPLOYMENT"
+          # echo "::set-output name=APPROVER::$APPROVER"
+
+      - name: Configure AWS credentials
+        if: steps.check.outputs.triggered == 'true' || steps.apply.outputs.triggered == 'true'
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }} 
+          aws-region: us-east-1
+
+      - name: Run Terrascan
+        id: terrascan
+        if: steps.check.outputs.triggered == 'true' || steps.apply.outputs.triggered == 'true'
+        uses: accurics/terrascan-action@main
+        with:
+          iac_type: 'terraform'
+          iac_version: 'v13'
+          policy_type: 'aws'
+          only_warn: true
+
+      - uses: hashicorp/setup-terraform@v2
+        if: steps.check.outputs.triggered == 'true' || steps.apply.outputs.triggered == 'true'
+        with:
+          terraform_version: 1.1.7
+      
+      - name: Terraform Fmt
+        id: fmt
+        if: steps.check.outputs.triggered == 'true'
+        working-directory: terraform/${{ steps.comment.outputs.STACK }}
+        continue-on-error: true
+        run: terraform fmt -check
+
+      - name: Terraform init
+        id: init
+        if: steps.check.outputs.triggered == 'true'
+        working-directory: terraform/${{ steps.comment.outputs.STACK }}
+        env:
+          ENV_STACK: ${{ steps.comment.outputs.STACK }}
+          ENV_DEPLOYMENT: ${{ steps.comment.outputs.DEPLOYMENT }}
+        run: terraform init -backend-config "key=${{ env.ENV_STACK }}/${{ env.ENV_STACK }}-${{ env.ENV_DEPLOYMENT }}.tfstate"
+      
+      - name: Terraform validate
+        id: validate
+        if: steps.check.outputs.triggered == 'true'
+        working-directory: terraform/${{ steps.comment.outputs.STACK }}
+        run: terraform validate
+      
+      - name: Terraform plan
+        id: plan
+        if: steps.check.outputs.triggered == 'true'
+        working-directory: terraform/${{ steps.comment.outputs.STACK }}
+        env:
+          vars-file: environments/${{ steps.comment.outputs.DEPLOYMENT }}.tfvars
+        run: terraform plan -no-color --var-file=${{ env.vars-file }}
+
+      - name: Plan output
+        id: output
+        uses: actions/github-script@v3
+        if: github.event_name == 'pull_request' && steps.check.outputs.triggered == 'true'
+        env:
+          PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const output = `#### Terraform Format and Style 🖌\`${{ steps.fmt.outcome }}\`
+
+            #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
+            #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
+            <details><summary>Show Plan</summary>
+
+            \`\`\`hcl
+            ${process.env.PLAN}
+            \`\`\`
+
+            </details>
+
+            **Pusher**: @${{ github.actor }}
+            **Action**: ${{ github.event_name }}
+            `;
+            github.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: output
+            })
+      # - uses: trstringer/manual-approval@v1
+      #   with:
+      #     secret: ${{ github.TOKEN }}
+      #     approvers: ${{ env.approvers }} #mshidlov, yuval-hazaz,germanilia
+      - name: Terraform apply
+        id: apply
+        if: steps.apply.outputs.triggered == 'true'
+        working-directory: terraform/${{ steps.comment.outputs.STACK }}
+        run: |
+          terraform apply -auto-approve -input=false --var-file=${{ env.vars-file }}
