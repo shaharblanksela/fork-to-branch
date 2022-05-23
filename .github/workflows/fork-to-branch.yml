@@ -69,9 +69,8 @@ jobs:
           git remote add upstream https://github.com/shaharblanksela/fork-to-branch.git
           git fetch --all
           git checkout ${{ env.REF }}
-          git pull
           git checkout -b pr/${{ env.REF }}
-          git push --set-upstream upstream pr/${{ env.REF }}
+          git push -f --set-upstream upstream pr/${{ env.REF }}
           
           echo "Forked branch ${{ env.OWNER }}:${{ env.REF }} has been pushed to fork-to-branch repo pr/${{ env.REF }}"
           
