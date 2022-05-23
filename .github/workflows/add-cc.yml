@@ -1,0 +1,45 @@
+name: Code-Coverage
+on:
+  pull-request:
+    types: [opened, synchronize, reopened]
+    
+jobs:
+  Code-Coverage:
+    runs-on: ubuntu-18.04
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: output clover-file
+        id: clover-file
+        run: |
+          clover-file=clover.xml
+          echo "::set-output name=clover-file::$clover-file"
+      
+      - name: Coverage Report
+        id: cc-report
+        uses: danhunsaker/clover-reporter-action@v0.2.17-clover
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          clover-file: clover.xml
+
+      - name: Find Comment
+        uses: peter-evans/find-comment@v2
+        id: fc
+        with:
+          issue-number: ${{ github.event.number }}
+          comment-author: 'github-actions[bot]'
+          body-includes: Coverage after merging
+
+      - name: Update comment
+        uses: peter-evans/create-or-update-comment@v2
+        env:
+          SERVICE: bobo
+          CLOVER-FILE: ${{steps.clover-file.outputs.clover-file}}
+        with:
+          comment-id: ${{ steps.fc.outputs.comment-id }}
+          body: |
+            This code-coverage is for $SERVICE service at $CLOVER-FILE
+          reactions: eyes
+
