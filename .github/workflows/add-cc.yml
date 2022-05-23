@@ -1,0 +1,32 @@
+name: Code-Coverage
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    
+jobs:
+  Code-Coverage:
+    runs-on: ubuntu-18.04
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Create comment
+        uses: peter-evans/create-or-update-comment@v2
+        env:
+          SERVICE: bobo
+          CLOVER-FILE: clover.xml
+        with:
+          issue-number: ${{ github.event.number }}
+          body: |
+            This code-coverage is for $SERVICE service at $CLOVER-FILE below
+          reactions: '+1'
+          
+      - name: Coverage Report
+        id: cc-report
+        uses: danhunsaker/clover-reporter-action@v0.2.17-clover
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          clover-file: clover.xml
+
+  
