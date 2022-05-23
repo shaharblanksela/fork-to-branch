@@ -11,12 +11,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: output clover-file
-        id: clover-file
-        run: |
-          clover-file=clover.xml
-          echo "::set-output name=clover-file::$clover-file"
-      
       - name: Coverage Report
         id: cc-report
         uses: danhunsaker/clover-reporter-action@v0.2.17-clover
@@ -36,7 +30,7 @@ jobs:
         uses: peter-evans/create-or-update-comment@v2
         env:
           SERVICE: bobo
-          CLOVER-FILE: ${{steps.clover-file.outputs.clover-file}}
+          CLOVER-FILE: clover.xml
         with:
           comment-id: ${{ steps.fc.outputs.comment-id }}
           body: |
