@@ -70,6 +70,7 @@ jobs:
           git fetch --all
           git checkout ${{ env.REF }}
           git pull upstream main
+          git config pull.ff only
           git checkout -b pr/${{ env.REF }}
           git push --set-upstream upstream pr/${{ env.REF }}
           
