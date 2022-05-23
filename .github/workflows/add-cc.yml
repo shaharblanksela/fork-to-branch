@@ -1,6 +1,6 @@
 name: Code-Coverage
 on:
-  pull-request:
+  pull_request:
     types: [opened, synchronize, reopened]
     
 jobs:
