@@ -11,6 +11,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
+      - name: Create comment
+        uses: peter-evans/create-or-update-comment@v2
+        env:
+          SERVICE: bobo
+          CLOVER-FILE: clover.xml
+        with:
+          issue-number: ${{ github.event.number }}
+          body: |
+            This code-coverage is for $SERVICE service at $CLOVER-FILE below
+          reactions: '+1'
+          
       - name: Coverage Report
         id: cc-report
         uses: danhunsaker/clover-reporter-action@v0.2.17-clover
@@ -18,22 +29,4 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           clover-file: clover.xml
 
-      - name: Find Comment
-        uses: peter-evans/find-comment@v2
-        id: fc
-        with:
-          issue-number: ${{ github.event.number }}
-          comment-author: 'github-actions[bot]'
-          body-includes: Coverage after merging
-
-      - name: Update comment
-        uses: peter-evans/create-or-update-comment@v2
-        env:
-          SERVICE: bobo
-          CLOVER-FILE: clover.xml
-        with:
-          comment-id: ${{ steps.fc.outputs.comment-id }}
-          body: |
-            This code-coverage is for ${{ env.SERVICE }} service at ${{ env.CLOVER-FILE }}
-          reactions: eyes
-
+  
