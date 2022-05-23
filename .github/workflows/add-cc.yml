@@ -34,6 +34,6 @@ jobs:
         with:
           comment-id: ${{ steps.fc.outputs.comment-id }}
           body: |
-            This code-coverage is for $SERVICE service at $CLOVER-FILE
+            This code-coverage is for ${{ env.SERVICE }} service at ${{ env.CLOVER-FILE }}
           reactions: eyes
 
